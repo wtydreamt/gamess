@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>游戏管理</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="__PUBLIC__/demo/css/layui.css">
+</head>
+<body class="childrenBody">
+  <blockquote class="layui-elem-quote">
+    
+      <form class="layui-form">
+    
+      <div class="layui-inline">
+        <a class="layui-btn layui-btn-normal newsAdd_btn">添加标签</a>
+      </div>
+      </form>
+  </blockquote>
+  <div class="layui-form news_list">
+      <table class="layui-table">
+        <colgroup>
+        <col width="3%">
+        <col width="5%">
+        <col width="5%">
+        <col width="3%">
+        </colgroup>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>标签顺序</th>
+          <th>图片</th>
+          <th>操作</th>
+        </tr> 
+        </thead>
+        <tbody class="news_content">
+ {volist name='label' id='vo'}
+                <tr id="del_{$vo.id}">
+                  <td>{$vo.id}</td>
+                  <td>{$vo.sorts}</td>
+<td style="text-align:center"><img style="width:50px;height:30px" src="__BASEURL__{$vo.label_img}" alt="加载中"></td>
+                  <td>
+                <a data="{$vo.id}"  class="layui-btn layui-btn-danger layui-btn-mini del"><i class="layui-icon">&#xe640;</i>删除</a>
+                <a data="{$vo.id}"  class="layui-btn layui-btn-danger layui-btn-mini edit"><i class="layui-icon">&#xe642;</i>编辑</a>                
+                  </td>
+                </tr>
+            {/volist}
+        </tbody>
+    </table>
+  </div>
+      <div class="admin-table-page">
+          
+      </div>
+  <script type="text/javascript" src="__PUBLIC__/static/admin/layui/layui/layui.js"></script>
+</body>
+</html>
+<script>
+layui.config({
+  base : "js/"
+}).use(['form','layer','jquery','laypage'],function(){
+  var form = layui.form(),
+    layer = parent.layer === undefined ? layui.layer : parent.layer,
+    laypage = layui.laypage,
+    $ = layui.jquery;
+   $(".del").click(function(){
+    var  id=$(this).attr("data");
+    var send={id:id}
+        layer.confirm('是否删除此项', {
+          btn: ['确定','取消']
+        }, function(){
+      $.post("LabelDel",send,function(msg){
+        msg=$.parseJSON( msg );
+        if(msg.status=="200"){
+          $("#del_"+id).remove();
+          layer.msg("删除成功",{icon: 6});
+          location.reload();
+        }else{
+          layer.msg(msg.Message,{icon: 5});
+        }
+      })
+        })
+   })
+   
+   $('.shows').on('click', function (e){
+        var _this=$(this);
+      var shows=$(this).attr("data");
+      var id=$(this).attr("v");
+      var save={'1':2,'2':1};
+      var s=save[shows]
+      var send={id:id,show:s}
+      var icon={'2':"&#x1006;",'1':"&#xe618;"};
+      $.post("showSave",send,function(msg){
+        msg=$.parseJSON( msg );
+        if(msg.status == "200"){
+          _this.attr("data",s);
+          _this.html(icon[s])         
+        }else{
+          layer.msg(msg.Message,{icon: 5});
+        }
+      })
+    })
+  //添加文章
+  //改变窗口大小时，重置弹窗的高度，防止超出可视区域（如F12调出debug的操作）
+  $(window).one("resize",function(){
+    $(".newsAdd_btn").click(function(){
+      var index = layui.layer.open({
+        title : "添加标签",
+        type : 2,
+        content : "LabelAdd",
+        success : function(layero, index){
+          setTimeout(function(){
+            layui.layer.tips('点击此处返回图片列表', '.layui-layer-setwin .layui-layer-close', {
+              tips: 3
+            });
+          },500)
+        }
+      })      
+      layui.layer.full(index);
+    })
+    $(".edit").click(function(){
+      id = $(this).attr("data");
+      var index = layui.layer.open({
+        title : "编辑",
+        type : 2,
+        content : "LabelInfo?id="+id,
+        success : function(layero, index){
+          setTimeout(function(){
+            layui.layer.tips('点击此处返回图片列表', '.layui-layer-setwin .layui-layer-close', {
+              tips: 3
+            });
+          },500)
+        }
+      })      
+      layui.layer.full(index);
+    })    
+  }).resize();
+
+})
+</script>

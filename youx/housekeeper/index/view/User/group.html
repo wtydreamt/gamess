@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>添加组别</title>
+<link rel="stylesheet" href="__PUBLIC__/demo/css/layui.css">
+<style>
+</style>
+</head>
+<body>
+<blockquote class="layui-elem-quote">
+        <button  class="layui-btn demo" data-type="test5">
+          <i class="layui-icon">&#xe608;</i> 添加组别
+        </button>
+</blockquote>
+<div id="test11111" style="display: none;padding: 10px;">
+<form class="layui-ajax layui-ajax-pane1">
+  <div class="layui-form-item">
+    <label class="layui-form-label">组别名称</label>
+    <div class="layui-input-inline">
+      <input type="text" name="groupName"   placeholder="请输入组别名称" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux"></div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">排序</label>
+    <div class="layui-input-inline">
+      <input type="text" name="shors" value="50" placeholder="数字越大越靠前" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux"></div>
+  </div>  
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" id="addUser" lay-submit="false" onclick="return false;">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>  
+</form>
+</div>
+
+
+<div class="layui-form news_list">
+      <table class="layui-table">
+        <colgroup>
+        <col width="3%">
+        <col width="6%">
+        <col width="6%">
+        </colgroup>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>组别名称</th>
+          <th>操作</th>
+        </tr> 
+        </thead>
+        <tbody class="news_content">
+            {volist name='role' id='vo'}
+                <tr id="del_{$vo.r_id}">
+                  <td>{$vo.r_id}</td>
+                  <td>{$vo.rolename}</td>
+                  <td>
+                <a data="{$vo.r_id}" right="{$vo.right}"  id="right_{$vo.r_id}" class="layui-btn layui-btn-danger layui-btn-mini quanxian"><i class="layui-icon">&#xe614;</i>分配权限</a>
+                
+                <a data="{$vo.r_id}"  class="layui-btn layui-btn-danger layui-btn-mini del"><i class="layui-icon">&#xe640;</i>删除</a>
+                <a data="{$vo.r_id}"  class="layui-btn layui-btn-danger layui-btn-mini edit"><i class="layui-icon">&#xe642;</i>编辑</a>                    
+                  </td>
+                </tr>
+            {/volist}
+        </tbody>
+    </table>
+  </div>
+<div id="right" style="display: none;padding: 10px;">
+<form class="layui-ajax layui-ajax-pane1">
+  {:groupMenu()}
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" id="quan" lay-submit="false" onclick="return false;">立即提交</button>
+        <button type="button" class="layui-btn layui-btn-primary" id="whole">全选</button>
+        <button type="button" class="layui-btn layui-btn-primary" id="back">反选</button>
+        </div>
+    </div> 
+</form>
+<script src="__PUBLIC__/demo/layui.js"></script>
+<script>
+layui.use(['laypage','layer','element','form'], function(){
+  var $ = layui.jquery, layer = layui.layer,laypage = layui.laypage,element=layui.element;//独立版的layer无需执行这一句
+  $("#addUser").click(function(){
+      var rolename = $("input[name=groupName]").val();
+      var shors  = $("input[name=shors]").val();
+      var send ={rolename:rolename,shors:shors}
+      $.post("group",send,function(msg){
+        msg=$.parseJSON( msg );
+        if(msg.status == "200"){
+          location.reload();
+        }else{
+          layer.msg(msg.msg,{icon: 5});
+        }
+      })
+  })
+
+  $("#whole").click(function(){
+       $('input:checkbox').each(function (index, item) {
+       
+          $(this).prop("checked",true);
+       
+       });    
+  })
+
+  $("#back").click(function(){
+       $('input:checkbox').each(function (index, item) {
+       
+          if($(this).is(":checked")){
+            $(this).prop("checked",false);
+          }else{
+            $(this).prop("checked",true);
+          }
+       
+       });      
+  })
+
+  $("#quan").click(function(){
+     var id=$("#right").attr("data");
+     var vals = [];
+     $('input:checkbox:checked').each(function (index, item) {
+         vals.push($(this).val());
+     });
+     var str=vals.toString();
+     var send ={r_id:id,right:str};
+     $.post("__BASEURL__admin.php/userNode",send,function(msg){
+        msg=$.parseJSON( msg );
+        if(msg.status == "200"){
+          $("#right_"+id).attr("right",str)
+          layer.msg(msg.msg,{icon: 6});
+        }else{
+          layer.msg(msg.msg,{icon: 5});
+        }
+     })
+  })
+  $(".quanxian").click(function(){
+       var id = $(this).attr("data");
+       var right = $(this).attr("right");
+       var name=$("#del_"+id).find("td").eq(1).text();
+       vals =right.split(",");
+       $('input:checkbox').each(function (index, item) {
+        if($.inArray($(this).val(), vals) >-1){
+          $(this).prop("checked",true);
+        }else{
+          $(this).prop("checked",false);
+        }
+       });
+       layer.open({
+        title:name+'：添加权限',
+        type: 1,
+        skin: 'layui-layer-rim', 
+        area: ['500px', '400px'], 
+        content: $('#right')
+      },$("#right").attr("data",id)
+      );    
+  })
+
+  //触发事件
+  var active = {
+       test5: function(){
+       layer.open({
+        title:'添加组别',
+        type: 1,
+        skin: 'layui-layer-rim', 
+        area: ['500px', '230px'], 
+        content: $('#test11111')
+      });
+    }
+  };
+  $('.demo').on('click', function(){
+    var type = $(this).data('type');
+    active[type] ? active[type].call(this) : '';
+  });
+});
+</script>
+</body>
+</html>

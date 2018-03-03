@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>友情链接</title>
+<link rel="stylesheet" href="__PUBLIC__/demo/css/layui.css">
+<style>
+</style>
+</head>
+<body>
+<blockquote class="layui-elem-quote">
+        <button  class="layui-btn demo" data-type="test5">
+          <i class="layui-icon">&#xe608;</i> 添加友情链接
+        </button>
+</blockquote>
+<div id="test11111" style="display: none;padding: 10px;">
+<form class="layui-form">
+  <div class="layui-form-item">
+    <label class="layui-form-label">链接名称</label>
+    <div class="layui-input-inline">
+      <input type="text" name="fname"  placeholder="链接名称"  class="layui-input">
+    </div>
+  </div> 
+  <div class="layui-form-item">
+    <label class="layui-form-label">链接地址</label>
+    <div class="layui-input-inline">
+      <input type="text" name="link"   placeholder="链接地址" class="layui-input">
+    </div>
+  </div> 
+  <div class="layui-form-item" pane>
+    <label class="layui-form-label">链接状态</label>
+    <div class="layui-input-block">
+      <input type="radio" name="show" value="1" title="显示" checked>
+      <input type="radio" name="show" value="2" title="不显示">
+    </div>
+  </div> 
+  <div class="layui-form-item">
+    <label class="layui-form-label">链接序号</label>
+    <div class="layui-input-inline">
+      <input type="text" name="shors" value="0"  placeholder="链接序号"  class="layui-input">
+    </div>
+  </div> 
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="false" onclick="return false;" id="flink">立即提交</button>
+     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
+  </div>       
+</form>
+</div>
+<div id="save" style="display: none;padding: 10px;">
+<form class="layui-form">
+  <div class="layui-form-item">
+    <label class="layui-form-label">链接名称</label>
+    <div class="layui-input-inline">
+      <input type="text" name="sfname"  placeholder="链接名称"  class="layui-input">
+    </div>
+  </div> 
+  <div class="layui-form-item">
+    <label class="layui-form-label">链接地址</label>
+    <div class="layui-input-inline">
+      <input type="text" name="slink"   placeholder="链接地址" class="layui-input">
+    </div>
+  </div> 
+  <div class="layui-form-item">
+    <label class="layui-form-label">链接序号</label>
+    <div class="layui-input-inline">
+      <input type="text" name="sshors" value="0"  placeholder="链接序号"  class="layui-input">
+    </div>
+  </div> 
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="false" onclick="return false;" data="" id="flinksave">立即提交</button>
+     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
+  </div>       
+</form>
+</div>
+
+  <div class="layui-form news_list">
+      <table class="layui-table">
+        <colgroup>
+        <col width="1%">
+        <col width="5%">
+        <col width="3%">
+        <col width="3%">
+        <col width="3%">
+        <col width="3%">
+        <col width="9%">
+        </colgroup>
+        <thead>
+        <tr>
+          <th><input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose" id="allChoose"></th>
+          <th>ID</th>
+          <th>序号</th>
+          <th>链接名称</th>
+          <th>链接地址</th>
+          <th>显示</th>
+          <th>操作</th>
+        </tr> 
+        </thead>
+        <tbody class="news_content">
+            {volist name='flink' id='vo'}
+                <tr id="del_{$vo.fid}">
+<td><input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose" id="allChoose_{$vo.fid}"></td>
+                  <td>{$vo.fid}</td>
+                  <td><span>{$vo.shors}</span></td>
+                  <td><span>{$vo.fname}</span></td>
+                  <td><span>{$vo.link}</span></td>
+                  <td>
+                  {eq name="$vo.show" value="1"}
+          <li class="layui-icon shows" v="{$vo.fid}" data="{$vo.show}" style="cursor:pointer;">&#xe618;</li>
+          {else/}
+          <li class="layui-icon shows" v="{$vo.fid}" data="{$vo.show}" style="cursor:pointer;">&#x1006;</li>
+          {/eq}
+                  </td>
+                  <td>
+                  <a data="{$vo.fid}" class="layui-btn layui-btn-xs del"><i class="layui-icon">&#xe640;</i>删除</a>
+                  <a data="{$vo.fid}" id="edit_{$vo.fid}" class="layui-btn layui-btn-xs edit"><i class="layui-icon">&#xe642;</i>编辑</a>                  
+                  </td>
+                </tr>
+            {/volist}       
+        </tbody>
+    </table>
+  </div>
+
+
+
+<script src="__PUBLIC__/demo/layui.js"></script>
+<script src="__PUBLIC__/js/flink.js"></script>
+<script>
+layui.use(['layer','form'], function(){
+  var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+  
+  //触发事件
+  var active = {
+       test5: function(){
+       layer.open({
+        title:'添加友情链接',
+        type: 1,
+        skin: 'layui-layer-rim', 
+        area: ['500px', '330px'], 
+        content: $('#test11111')
+      });
+    }  
+  };
+  $('.demo').on('click', function(){
+    var type = $(this).data('type');
+    active[type] ? active[type].call(this) : '';
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>导航栏设置</title>
+
+<link rel="stylesheet" href="__PUBLIC__/demo/css/layui.css">
+
+<style>
+</style>
+</head>
+<body>
+<blockquote class="layui-elem-quote">
+        <button  class="layui-btn demo" data-type="test5">
+          <i class="layui-icon">&#xe608;</i> 添加导航栏
+        </button>
+</blockquote>
+<div id="test11111" style="display: none;padding: 10px;">
+<form class="layui-form layui-form-pane1" action="">
+  <div class="layui-form-item">
+    <label class="layui-form-label">栏目名称</label>
+    <div class="layui-input-inline">
+      <input type="text" name="m_name"  placeholder="栏目名称"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">路由地址</label>
+    <div class="layui-input-inline">
+      <input type="text" name="like"   placeholder="路由地址"  class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux">
+    <span style="cursor:pointer;"><i class="layui-icon">&#xe615;</i>点击查看</span></div>
+  </div> 
+  <div class="layui-form-item" pane>
+    <label class="layui-form-label">菜单状态</label>
+    <div class="layui-input-block">
+      <input type="radio" name="shows" value="1" title="显示">
+      <input type="radio" name="shows" value="2" title="不显示">
+    </div>
+  </div>  
+  <div class="layui-form-item">
+    <label class="layui-form-label">栏目排序</label>
+    <div class="layui-input-inline">
+      <input type="text" name="shorts"  value="0"  class="layui-input">
+    </div>
+  </div>  
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn addCloumn" lay-submit="false" onclick="return false;">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>   
+</form>
+</div>
+<div id="save" style="display: none;padding: 10px;">
+<form class="layui-form layui-form-pane1" action="">
+  <div class="layui-form-item">
+    <label class="layui-form-label">栏目名称</label>
+    <div class="layui-input-inline">
+      <input type="text" name="sm_name"  placeholder="栏目名称"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">路由地址</label>
+    <div class="layui-input-inline">
+      <input type="text" name="slike"   placeholder="路由地址"  class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux">
+    <span style="cursor:pointer;"><i class="layui-icon">&#xe615;</i>点击查看</span></div>
+  </div> 
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" lay-submit="false" id="saveButton" onclick="return false;">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>   
+</form>
+</div>
+  <div class="layui-form news_list">
+      <table class="layui-table">
+        <colgroup>
+        <col width="1%">
+        <col width="2%">
+        <col width="2%">
+        <col width="8%">
+        <col width="2%">
+        <col width="10%">
+        </colgroup>
+        <thead>
+        <tr>
+          <th><input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose" id="allChoose"></th>
+          <th>排序</th>
+          <th>栏目名称</th>
+          <th>url</th>
+          <th>展示</th>
+          <th>操作</th>
+        </tr> 
+        </thead>
+        <tbody class="news_content">
+            {volist name='column' id='vo'}
+                <tr id="del_{$vo.m_id}">
+<td><input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose" id="allChoose_{$vo.m_id}"></td>
+                  <td style="text-align:center"> 
+                  <i class="layui-icon shorts" data="{$vo.m_id}" vy="2" style="float:left;cursor:pointer;">-</i>
+                  <span  id="span_{$vo.m_id}">{$vo.shorts}</span>
+                  <i class="layui-icon shorts" data="{$vo.m_id}" vy="1" style="float:right;cursor:pointer;">&#xe654;</i>
+                  </td>
+                  <td><span>{$vo.m_name}</span></td>
+                  <td><span>{$vo.url}</span></td>
+                  <td>
+                  {eq name="$vo.show" value="1"}
+          <li class="layui-icon shows" v="{$vo.m_id}" data="{$vo.show}" style="cursor:pointer;">&#xe618;</li>
+          {else/}
+          <li class="layui-icon shows" v="{$vo.m_id}" data="{$vo.show}" style="cursor:pointer;">&#x1006;</li>
+          {/eq}
+                  </td>
+                  <td>
+<!--                 <a data="{$vo.m_id}"  class="layui-btn layui-btn-danger layui-btn-mini del">
+                <i class="layui-icon">&#xe640;</i>删除
+                </a> -->
+                <a data="{$vo.m_id}"  class="layui-btn layui-btn layui-btn-mini edit">
+                <i class="layui-icon">&#xe642;</i>编辑
+                </a>                
+                  </td>
+                </tr>
+            {/volist}
+        </tbody>
+    </table>
+  </div>
+      <div class="admin-table-page">
+          {$render}
+      </div>
+
+<script src="__PUBLIC__/demo/layui.js"></script>
+<script>
+layui.use(['layer','form'], function(){
+  var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+  
+  //触发事件
+  var active = {
+       test5: function(){
+       layer.open({
+        title:'添加导航栏',
+        type: 1,
+        skin: 'layui-layer-rim', 
+        area: ['500px', '330px'], 
+        content: $('#test11111')
+      });
+    }
+  };
+
+  $(".addCloumn").click(function(){
+      var m_name=$("input[name=m_name]").val();
+      var url   =$("input[name=like]").val();
+      var show=1;
+      var show  =$(".layui-form-radioed").find("span").text();
+      if(show == "显示"){
+        show=1;
+      }
+      if(show == "不显示"){
+        show=2;
+      }
+      var shorts=$("input[name=shorts]").val();
+      var send={m_name:m_name,url:url,show:show,shorts:shorts}
+        $.post("columnAdd",send,function(msg){
+        msg=$.parseJSON( msg );
+        if(msg.status == "200"){
+          window.parent.location.reload();
+        var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+        parent.layer.close(index); //关闭当前窗口
+        }else{
+          layer.msg(msg.msg,{icon: 5});//失败的表情
+        }
+      })
+  })
+
+   $(".shorts").click(function(){
+     var id=$(this).attr("data");
+     var type=$(this).attr("vy");
+     var number=$("#span_"+id).html();
+     $.post('column/setIncDel',{type:type,id:id},function(msg){
+         if(type == 1){$("#span_"+id).html(number*1+1*1);}else{$("#span_"+id).html(number*1-1*1);}
+      })
+   })
+   $('.shows').on('click', function (e){
+      var _this=$(this);
+      var shows=$(this).attr("data");
+      var id=$(this).attr("v");
+      var save={'1':2,'2':1};
+      var s=save[shows]
+      var send={m_id:id,show:s}
+      var icon={'2':"&#x1006;",'1':"&#xe618;"};
+      $.post("column/showSave",send,function(msg){
+        msg=$.parseJSON( msg );
+        if(msg.status == "200"){
+          _this.attr("data",s);
+          _this.html(icon[s])         
+        }else{
+          layer.msg(msg.msg,{icon: 5});
+        }
+      })
+    })
+   $(".del").click(function(){
+    var  id=$(this).attr("data");
+    var send={id:id}
+    $.post("column/del",send,function(msg){
+      msg=$.parseJSON( msg );
+      if(msg.status=="200"){
+        $("#del_"+id).remove();
+        location.reload();
+      }else{
+        layer.msg(msg.msg,{icon: 5});
+      }
+    })
+   })
+   $(".edit").click(function(){
+    var  id=$(this).attr("data");
+    tdData = $("#del_"+id).find("td");
+    m_name=tdData.find("span").eq(1).text();
+    url=tdData.find("span").eq(2).text();
+       layer.open({
+        title:'修改导航栏',
+        type: 1,
+        skin: 'layui-layer-rim', 
+        area: ['500px', '330px'], 
+        content: $('#save')
+      },
+      $("input[name=sm_name]").val(m_name),
+      $("input[name=slike]").val(url),
+      $("#saveButton").attr("data",id)    
+      );
+   })
+   $("#saveButton").click(function(){
+    var  id=$(this).attr("data");
+    var m_name=$("input[name=sm_name]").val();
+    var url=$("input[name=slike]").val();   
+    var send={m_id:id,url:url,m_name:m_name}
+      $.post("column/showSave",send,function(msg){
+        msg=$.parseJSON( msg );
+        if(msg.status == "200"){
+        location.reload();
+        }else{
+          layer.msg(msg.msg,{icon: 5});
+        }
+      })
+   })
+  $('.demo').on('click', function(){
+    var type = $(this).data('type');
+    active[type] ? active[type].call(this) : '';
+  });
+});
+</script>
+</body>
+</html>

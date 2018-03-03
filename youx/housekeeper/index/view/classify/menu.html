@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>layer弹层 - layui</title>
+
+<link rel="stylesheet" href="__PUBLIC__/demo/css/layui.css">
+
+<style>
+</style>
+</head>
+<body>
+<div id="svae1" style="display: none;padding: 10px;">
+<form class="layui-form">
+  <div class="layui-form-item">
+    <label class="layui-form-label">菜单名称</label>
+    <div class="layui-input-inline">
+      <input type="text" id="save1MenuName" placeholder="菜单名称" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux">菜单展示名称</div>
+  </div> 
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" id="svaeOne" lay-submit="false" onclick="return false;">立即修改</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>   
+</form>
+</div>
+<div class="layui-form news_list">
+      <table class="layui-table">
+        <colgroup>
+        <col width="3%">
+        <col width="6%">
+        <col width="6%">
+        </colgroup>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>分类名称</th>
+          <th>操作</th>
+        </tr> 
+        </thead>
+        <tbody class="news_content">
+        {volist name='meun' id='vo'}
+                <tr id="del_{$vo.id}">
+                  <td>{$vo.id}</td>
+                  <td>{$vo.MenuName}</td>
+                  <td>
+                <a data="{$vo.id}"  class="layui-btn  layui-btn-mini edit"><i class="layui-icon">&#xe642;</i>编辑</a>                                                     
+                  </td>
+                </tr>
+        {/volist}
+        </tbody>
+    </table>
+  </div>
+
+
+
+
+
+<script src="__PUBLIC__/demo/layui.js"></script>
+<script>
+layui.use(['layer','form'], function(){
+  var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+
+
+
+
+
+  $(".news_list").on("click",".edit",function(){
+    var id=$(this).attr("data");
+         var MenuName=$("#del_"+id).find("td").eq(1).text();
+         layer.open({
+          title:'菜单修改',
+          type: 1,
+          skin: 'layui-layer-rim', 
+          area: ['500px', '200px'], 
+          content: $('#svae1')
+        },
+        $("#svae1").attr("data",id),
+        $("#save1MenuName").val(MenuName)
+        );       
+  })
+
+
+
+  $("#svaeOne").click(function(){
+    var id=$("#svae1").attr("data");
+    var MenuName=$("#save1MenuName").val();
+    var send = {MenuName:MenuName,id:id};
+    $.post("MenuSave",send,function(msg){
+            msg=$.parseJSON( msg );
+            if(msg.status == 200){
+              window.location.reload();
+            }else{
+              layer.msg(msg.msg, {icon: 1});
+            }
+    })    
+  })
+  $('.demo').on('click', function(){
+    var type = $(this).data('type');
+    active[type] ? active[type].call(this) : '';
+  });
+});
+</script>
+</body>
+</html>

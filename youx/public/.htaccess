@@ -1,0 +1,7 @@
+# 开启 rewrite 功能
+Options +FollowSymlinks
+RewriteEngine on
+RewriteCond %{SERVER_NAME} !xsc.ffcka.cn
+RewriteRule  ^(.*)$ ERROR.html
+
+ErrorDocument 404 /404.html

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>添加管理员</title>
+<link rel="stylesheet" href="__PUBLIC__/demo/css/layui.css">
+<style>
+</style>
+</head>
+<body>
+<blockquote class="layui-elem-quote">
+        <button  class="layui-btn demo" data-type="test5">
+          <i class="layui-icon">&#xe608;</i> 添加用户
+        </button>
+</blockquote>
+<div id="test11111" style="display: none;padding: 10px;">
+<form class="layui-ajax layui-ajax-pane1">
+  <div class="layui-form-item">
+    <label class="layui-form-label">用户名</label>
+    <div class="layui-input-inline">
+      <input type="text" name="username" id="username"  required lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux"></div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">密码</label>
+    <div class="layui-input-inline">
+      <input type="password" name="password" id="password"  required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux"></div>
+  </div>  
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" id="addUser" lay-submit="false" onclick="return false;">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>  
+</form>
+</div>
+
+
+<div id="save" style="display: none;padding: 10px;">
+<form class="layui-ajax layui-ajax-pane1">
+  <div class="layui-form-item">
+    <label class="layui-form-label">用户名</label>
+    <div class="layui-input-inline">
+      <input type="text" name="username" id="savename"  required lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux"></div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">密码</label>
+    <div class="layui-input-inline">
+      <input type="password" name="password" id="savepwd"  required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+    </div>
+    <div class="layui-form-mid layui-word-aux"></div>
+  </div>  
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" id="saveSubmit" lay-submit="false" onclick="return false;">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>  
+</form>
+</div>
+  <div class="layui-form news_list">
+      <table class="layui-table">
+        <colgroup>
+        <col width="3%">
+        <col width="2%">
+        <col width="5%">
+        <col width="6%">
+        <col width="3%">
+        <col width="9%">
+        </colgroup>
+        <thead>
+        <tr>
+          <th>用户名</th>
+          <th>密码</th>
+          <th>添加时间</th>
+          <th>最后登录时间</th>
+          <th>登录ip</th>
+          <th>操作</th>
+        </tr> 
+        </thead>
+        <tbody class="news_content">
+            {volist name='admin' id='vo'}
+                <tr id="del_{$vo.id}">
+                  <td>{$vo.name}</td>
+                  <td>*******</td>
+                  <td>{$vo.addtime}</td>
+                  <td>{$vo.logintime}</td>
+                  <td>{$vo.ip}</td>
+                  <td>
+                <a data="{$vo.id}"  class="layui-btn layui-btn-danger layui-btn-mini del"><i class="layui-icon">&#xe640;</i>删除</a>
+                <a data="{$vo.id}"  class="layui-btn layui-btn-danger layui-btn-mini edit"><i class="layui-icon">&#xe642;</i>编辑</a>
+                <a data="{$vo.id}"  role="{$vo.r_id}" id="rolebutton_{$vo.id}" class="layui-btn layui-btn-danger layui-btn-mini rolebutton"><i class="layui-icon">&#xe614;</i>分配角色</a>                                
+                  </td>
+                </tr>
+            {/volist}
+        </tbody>
+    </table>
+  </div>
+
+<div id="role" style="display: none;padding: 10px;">
+  {:role()}
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" id="roleSubmit" lay-submit="false" onclick="return false;">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div> 
+</div>
+<script src="__PUBLIC__/demo/layui.js"></script>
+<script>
+layui.use(['laypage','layer','form'], function(){
+  var $ = layui.jquery, layer = layui.layer,laypage = layui.laypage,form=layui.form;
+  $("#addUser").click(function(){
+      var name = $("#username").val();
+      var pwd  = $("#password").val();
+      var send ={name:name,pwd:pwd}
+      $.post("User",send,function(msg){
+        msg=$.parseJSON( msg );
+        if(msg.status == "200"){
+          location.reload();
+        }else{
+          layer.msg(msg.msg,{icon: 5});
+        }
+      })
+  })
+
+  $(".edit").click(function(){
+    var id=$(this).attr("data");
+    var name=$("#del_"+id).find("td").eq(0).text();
+    var pwd=$("#del_"+id).find("td").eq(1).text();
+       layer.open({
+        title:'添加管理员',
+        type: 1,
+        skin: 'layui-layer-rim', 
+        area: ['500px', '230px'], 
+        content: $('#save')
+      },$("#savename").val(name),
+        $("#savepwd").val(pwd),
+        $("#save").attr("data",id)
+      );
+  })
+  $(".rolebutton").click(function(){
+       var id = $(this).attr("data");
+       var role = $(this).attr("role");
+       var name =$("#del_"+id).find("td").eq(0).text();
+    $('input:radio').each(function (index, item) {
+
+          if(role == $(this).val()){
+              $(this).prop("checked",true);
+          }else{
+              $(this).prop("checked",false);
+          }
+          form.render();
+    });       
+       layer.open({
+        title:name+'：分配角色',
+        type: 1,
+        skin: 'layui-layer-rim', 
+        area: ['500px', '350px'], 
+        content: $('#role')
+      },$('#role').attr("data",id),
+        $('#role').attr("role",role)
+      );    
+  })
+
+  $("#roleSubmit").click(function(){
+    var id=$('#role').attr("data");
+    var role=$('#role').attr("role"); 
+    var vals=[]
+    $('input:radio').each(function (index, item) {
+          if($(this).is(":checked")){
+            vals.push($(this).val());
+          }
+          form.render();
+    }); 
+    if(role == vals[0]){
+      layer.msg("保存成功", {icon: 6});
+      layer.closeAll();
+    }else{
+      var send = {r_id:vals[0],id:id}
+      $.post("__BASEURL__admin.php/adminRole",send,function(msg){
+          msg=$.parseJSON( msg );
+          if(msg.status == "200"){
+            $("#rolebutton_"+id).attr("role",vals[0]);
+             layer.closeAll();
+          }else{
+            layer.msg(msg.msg, {icon: 5});
+          }
+      })
+    }
+
+  })
+
+
+
+ $("#saveSubmit").click(function(){
+     var id=$("#save").attr("data");
+     var name = $("#savename").val();
+     var pwd  = $("#savepwd").val();
+     var send = {id:id,name:name,pwd:pwd}
+
+     
+     $.post("__BASEURL__admin.php/adminSave",send,function(msg){
+        msg=$.parseJSON( msg );
+        if(msg.status == "200"){
+          layer.close(1);
+          $("#del_"+id).find("td").eq(0).text(name);
+        }else{
+          layer.msg(msg.msg, {icon: 5});
+        }
+     })
+ })
+
+  $(".del").click(function(){
+    var id = $(this).attr("data");
+        layer.confirm('是否删除此项', {
+          btn: ['确定','取消']
+        }, function(){
+            $.post("__BASEURL__admin.php/adminDel",{id:id},function(msg){
+              msg=$.parseJSON( msg );
+              if(msg.status == 200){
+                $("#del_"+id).remove();
+                 window.location.reload();
+              }else{
+                layer.msg(msg.msg, {icon: 1});
+              }
+              
+            })
+        })
+  })
+  //触发事件
+  var active = {
+       test5: function(){
+       layer.open({
+        title:'添加管理员',
+        type: 1,
+        skin: 'layui-layer-rim', 
+        area: ['500px', '230px'], 
+        content: $('#test11111')
+      });
+    }
+  };
+  $('.demo').on('click', function(){
+    var type = $(this).data('type');
+    active[type] ? active[type].call(this) : '';
+  });
+});
+</script>
+</body>
+</html>
